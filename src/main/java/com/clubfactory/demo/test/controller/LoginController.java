@@ -22,7 +22,6 @@ public class LoginController {
 
     @PostMapping("/loginAction")
     public String loginAction(HttpServletRequest request){
-        System.out.println("********************");
         String name = request.getParameter("username");
         String password = request.getParameter("password");
         System.out.println("userName=" + name + "   password=" + password);
@@ -45,7 +44,8 @@ public class LoginController {
 
 //    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/admin")
-    public String admin() {
+    public String admin(HttpServletRequest request) {
+        System.out.println("session->" + request.getSession().getAttribute("username"));
         return "admin";
     }
 
