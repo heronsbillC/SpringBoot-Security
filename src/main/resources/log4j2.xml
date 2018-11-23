@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Configuration 中的status代表log4j2内部的信息输出级别-->
+<Configuration status="info" monitorInterval="5">
+    <Properties>
+        <Property name="pattern">[%d{yyyy-MM-dd HH:mm:ss}] [%-5level] [%c{1}.%M] Line:[%L] - %m%n</Property>
+        <Property name="logPath">/logs/user-center-admin</Property>
+        <Property name="maxAge">30d</Property>
+    </Properties>
+
+    <appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <!--<ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>-->
+            <PatternLayout pattern="${pattern}"/>
+        </Console>
+
+        <RollingRandomAccessFile name="RollingFileInfo" fileName="${logPath}/info.log"
+                                 filePattern="${logPath}/info/info-%d{yyyy-MM-dd}.log">
+
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${logPath}/info" maxDepth="1">
+                    <IfFileName glob="info-*.log"/>
+                    <IfLastModified age="${maxAge}"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingRandomAccessFile>
+
+        <RollingRandomAccessFile name="RollingFileWarn" fileName="${logPath}/warn.log"
+                                 filePattern="${logPath}/warn/warn-%d{yyyy-MM-dd}.log">
+            <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${logPath}/warn" maxDepth="1">
+                    <IfFileName glob="warn-*.log"/>
+                    <IfLastModified age="${maxAge}"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingRandomAccessFile>
+
+        <RollingRandomAccessFile name="RollingFileError" fileName="${logPath}/error.log"
+                                 filePattern="${logPath}/error/error-%d{yyyy-MM-dd}.log">
+            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${logPath}/error" maxDepth="1">
+                    <IfFileName glob="error-*.log"/>
+                    <IfLastModified age="${maxAge}"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingRandomAccessFile>
+
+        <RollingRandomAccessFile name="MybatisSlowSql" fileName="${logPath}/mybatis_slow_sql.log"
+                                 filePattern="${logPath}/mybatis/mybatis_slow_sql-%d{yyyy-MM-dd}.log">
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${logPath}/mybatis" maxDepth="1">
+                    <IfFileName glob="mybatis_slow_sql-*.log"/>
+                    <IfLastModified age="${maxAge}"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingRandomAccessFile>
+
+        <RollingRandomAccessFile name="DubboElapsed" fileName="${logPath}/dubbo_elapsed.log"
+                                 filePattern="${logPath}/dubbo/dubbo_elapsed-%d{yyyy-MM-dd}.log">
+            <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${logPath}/dubbo" maxDepth="1">
+                    <IfFileName glob="dubbo_elapsed-*.log"/>
+                    <IfLastModified age="${maxAge}"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingRandomAccessFile>
+
+    </appenders>
+
+
+    <loggers>
+
+        <logger name="com.alibaba.druid.filter.stat.StatFilter" level="info" includeLocation="true" additivity="false">
+            <appender-ref ref="MybatisSlowSql"/>
+        </logger>
+
+        <logger name="com.clubfactory.center.dubbothrift.support.filter.DubboElapsedFilter" level="debug"
+                includeLocation="true" additivity="false">
+            <appender-ref ref="DubboElapsed"/>
+        </logger>
+
+        <root level="info" includeLocation="true">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="RollingFileInfo"/>
+            <appender-ref ref="RollingFileWarn"/>
+            <appender-ref ref="RollingFileError"/>
+        </root>
+    </loggers>
+
+</Configuration>
