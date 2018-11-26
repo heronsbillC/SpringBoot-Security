@@ -74,10 +74,38 @@ public class UserServiceImpl implements /*UserService,*/UserDetailsService {
         return roles;
     }
 
+    /**
+     * 根据角色名找到角色
+     * @param roleName
+     * @return
+     */
+    public Role getRoleByRoleName(String roleName){
+        RoleExample example = new RoleExample();
+        example.createCriteria().andRoleEqualTo(roleName);
+        Role role = roleMapper.selectByExample(example).get(0);
+        return role;
+    }
+
+    /**
+     * 根据资源id获取到角色，一个资源对应多个角色
+     * @param id
+     * @return
+     */
+    public List<Role> getRoleByResourceId(int id){
+        RoleExample example = new RoleExample();
+        example.createCriteria().andResourceIdEqualTo(id);
+        List<Role> roles = new ArrayList<>();
+        //此例中一个资源对应一个角色
+        Role role = roleMapper.selectByExample(example).get(0);
+        roles.add(role);
+        return roles;
+    }
+
     @DataSource(TEST)
     private Users getUserByName(String name){
         UsersExample example = new UsersExample();
         example.createCriteria().andNameEqualTo(name);
         return usersMapper.selectByExample(example).get(0);
     }
+
 }

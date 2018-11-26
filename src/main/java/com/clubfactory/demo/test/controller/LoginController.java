@@ -4,6 +4,7 @@ import com.clubfactory.demo.test.pojo.Users;
 import com.clubfactory.demo.test.service.impl.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,14 +43,14 @@ public class LoginController {
         return "hello";
     }
 
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/admin")
-    public String admin(HttpServletRequest request) {
-        System.out.println("session->" + request.getSession().getAttribute("username"));
+    public String admin() {
+        System.out.println(SecurityContextHolder.getContext().getAuthentication().getName());
         return "admin";
     }
 
-//    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     @RequestMapping(value = "/user")
     public String user() {
         return "user";

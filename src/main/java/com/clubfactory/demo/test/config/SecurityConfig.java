@@ -1,6 +1,10 @@
 package com.clubfactory.demo.test.config;
 
+import com.clubfactory.demo.test.service.impl.MyAccessDecisionManager;
+import com.clubfactory.demo.test.service.impl.MyFilterInvocationSecurityMetadataSource;
 import com.clubfactory.demo.test.service.impl.UserServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -8,11 +12,19 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)//开启security注解
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    //根据一个url请求，获得访问它所需要的roles权限
+    @Autowired
+    MyFilterInvocationSecurityMetadataSource myFilterInvocationSecurityMetadataSource;
+
+    //接收一个用户的信息和访问一个url所需要的权限，判断该用户是否可以访问
+    @Autowired
+    MyAccessDecisionManager myAccessDecisionManager;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -20,8 +32,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //允许所有用户访问"/"和"/home"
         http.authorizeRequests()
                 .antMatchers( "/LoginController/home","/LoginController/loginAction").permitAll()
-                .antMatchers("/LoginController/admin").access("hasRole('ADMIN')")
-                .antMatchers("/LoginController/user").access("hasRole('USER')")
+//                .antMatchers("/LoginController/admin").access("hasRole('ADMIN')")
+//                .antMatchers("/LoginController/user").access("hasRole('USER')")
                 //其他地址的访问均需验证权限
 //                .anyRequest().authenticated()
                 .and()

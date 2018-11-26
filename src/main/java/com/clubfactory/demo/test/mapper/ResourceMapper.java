@@ -1,10 +1,8 @@
 package com.clubfactory.demo.test.mapper;
 
-
-import java.util.List;
-
 import com.clubfactory.demo.test.pojo.Resource;
 import com.clubfactory.demo.test.pojo.ResourceExample;
+import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 public interface ResourceMapper {
