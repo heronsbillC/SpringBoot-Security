@@ -6,12 +6,15 @@ import com.clubfactory.demo.test.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 
 @Configuration
@@ -25,16 +28,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //接收一个用户的信息和访问一个url所需要的权限，判断该用户是否可以访问
     @Autowired
     MyAccessDecisionManager myAccessDecisionManager;
-
+    @Autowired
+    private UserServiceImpl userService;
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         //允许所有用户访问"/"和"/home"
         http.authorizeRequests()
-                .antMatchers( "/LoginController/home","/LoginController/loginAction").permitAll()
-//                .antMatchers("/LoginController/admin").access("hasRole('ADMIN')")
-//                .antMatchers("/LoginController/user").access("hasRole('USER')")
-                //其他地址的访问均需验证权限
+                .antMatchers("/LoginController/home","/LoginController/loginAction","/LoginController/login").permitAll()
+                .antMatchers("/LoginController/admin").access("hasRole('ADMIN')")
+                .antMatchers("/LoginController/user").access("hasRole('USER')")
+                //任何请求登录后可以访问
 //                .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -66,16 +70,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(new UserServiceImpl());
+        auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
     }
 
     /**
-     * 设置用户密码的加密方式为MD5加密
+     * 设置用户密码的加密方式
      * @return
      */
-    /*@Bean
-    public Md5PasswordEncoder passwordEncoder() {
-        return new Md5PasswordEncoder();
-    }*/
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
 }

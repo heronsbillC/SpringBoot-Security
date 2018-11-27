@@ -3,6 +3,7 @@ package com.clubfactory.demo.test.controller;
 import com.clubfactory.demo.test.pojo.Users;
 import com.clubfactory.demo.test.service.impl.UserServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -18,14 +19,13 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/LoginController")
 public class LoginController {
 
-    @Resource
+    @Autowired
     private UserServiceImpl userService;
 
     @PostMapping("/loginAction")
     public String loginAction(HttpServletRequest request){
         String name = request.getParameter("username");
         String password = request.getParameter("password");
-        System.out.println("userName=" + name + "   password=" + password);
         Users user = userService.login(name,password);
         log.info("LoginController.loginAction->user="+user);
         if(user != null)
@@ -40,17 +40,18 @@ public class LoginController {
     }
     @RequestMapping("/hello")
     public String hello() {
+        System.out.println("getAuthentication-------->" + SecurityContextHolder.getContext().getAuthentication().getName());
         return "hello";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/admin")
     public String admin() {
-        System.out.println(SecurityContextHolder.getContext().getAuthentication().getName());
+        System.out.println("getAuthentication-------->" + SecurityContextHolder.getContext().getAuthentication().getName());
         return "admin";
     }
 
-    @PreAuthorize("hasRole('USER')")
+//    @PreAuthorize("hasRole('USER')")
     @RequestMapping(value = "/user")
     public String user() {
         return "user";

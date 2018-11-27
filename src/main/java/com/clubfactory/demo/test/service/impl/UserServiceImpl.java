@@ -7,7 +7,6 @@ import com.clubfactory.demo.test.pojo.Role;
 import com.clubfactory.demo.test.pojo.RoleExample;
 import com.clubfactory.demo.test.pojo.Users;
 import com.clubfactory.demo.test.pojo.UsersExample;
-import com.clubfactory.demo.test.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,7 +25,7 @@ import static com.clubfactory.demo.test.datasource.DataSourceConstant.TEST;
  */
 @Service
 @Slf4j
-public class UserServiceImpl implements /*UserService,*/UserDetailsService {
+public class UserServiceImpl implements UserDetailsService {
     /**
      * 根据用户名 返回一个UserDetails的实现类的实例
      * @param
@@ -34,8 +33,8 @@ public class UserServiceImpl implements /*UserService,*/UserDetailsService {
      * @throws UsernameNotFoundException
      */
     @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        Users user = getUserByName(s);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Users user = getUserByName(username);
         if(user == null)
             throw new UsernameNotFoundException("没有该用户");
         return new UserDetailImpl(user,getRole(user.getRoleId()));
@@ -46,7 +45,6 @@ public class UserServiceImpl implements /*UserService,*/UserDetailsService {
     @Resource
     private RoleMapper roleMapper;
 
-//    @Override
     @DataSource(TEST)
     public Users login(String userName, String password) {
         UsersExample usersExample = new UsersExample();

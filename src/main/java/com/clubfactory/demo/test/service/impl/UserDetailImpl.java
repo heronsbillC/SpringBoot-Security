@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,6 +16,7 @@ import java.util.List;
 /**
  * 为框架实现UserDetails接口
  */
+@Component
 @NoArgsConstructor
 @Data
 public class UserDetailImpl implements UserDetails {
@@ -24,15 +26,6 @@ public class UserDetailImpl implements UserDetails {
      * 用户对应的role
      */
     private List<Role> roles;
-
-    /**
-     * 用User构造
-     * @param user
-     */
-    public UserDetailImpl(Users user) {
-        this.userName = user.getName();
-        this.password = user.getPassword();
-    }
 
     /**
      * 用User和List<Role>构造
